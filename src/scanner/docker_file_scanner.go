@@ -34,7 +34,7 @@ func (s *dockerFileScanner) Parse(parser parsers.FileParser) {
 	parser.Parse(s.data)
 }
 func (s *dockerFileScanner) Write(writer writers.Writer) {
-	writer.Convert(s.data)
+	writer.Write(s.data)
 }
 func (s *dockerFileScanner) GetData() *models.Data {
 	return s.data
