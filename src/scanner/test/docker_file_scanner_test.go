@@ -1,6 +1,7 @@
 package test
 
 import (
+	"redhat-sre-task-dockerfile-scanner/src/api/github"
 	"redhat-sre-task-dockerfile-scanner/src/readers"
 	scanners "redhat-sre-task-dockerfile-scanner/src/scanner"
 	"redhat-sre-task-dockerfile-scanner/src/validators"
@@ -16,6 +17,7 @@ func TestScanner(t *testing.T) {
 	//TODO: add chain of calls
 	scanner.Read(readers.RemoteTxtReader(&MockHttpClient{}))
 	scanner.Validate(validators.GitHubValidator())
+	scanner.Query(github.Api(&MockGitHubClient{}))
 
 	// Assert
 	if scanner.GetData().Output == "" {
