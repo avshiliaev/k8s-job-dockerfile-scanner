@@ -19,10 +19,10 @@ func TestJsonStdWriter(t *testing.T) {
 	writer := writers.JsonStdWriter()
 
 	// Act
-	writer.Write(data)
+	err := writer.Write(data)
 
 	// Assert
-	if data.Output == "" {
+	if data.Output == "" || err != nil {
 		t.Error()
 	}
 }

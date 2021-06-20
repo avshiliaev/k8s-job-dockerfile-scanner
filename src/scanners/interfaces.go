@@ -10,9 +10,9 @@ import (
 
 // Scanner abstract type
 type Scanner interface {
-	Read(reader readers.Reader)
-	Validate(validator validators.Validator)
-	Query(api api.RepositoryApi)
-	Parse(parser parsers.FileParser)
-	Write(writer writers.Writer)
+	Read(reader readers.Reader) error
+	Validate(validator validators.Validator) error
+	Query(api api.RepositoryApi) error
+	Parse(parser parsers.FileParser) error
+	Write(writer writers.Writer) error
 }

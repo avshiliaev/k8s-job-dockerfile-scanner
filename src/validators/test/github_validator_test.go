@@ -18,10 +18,10 @@ func TestGitHubValidator(t *testing.T) {
 	validator := validators.GitHubValidator()
 
 	// Act
-	validator.Validate(data)
+	err := validator.Validate(data)
 
 	// Assert
-	if len(data.Credentials) == 0 {
+	if len(data.Credentials) == 0 || err != nil {
 		t.Error()
 	}
 }

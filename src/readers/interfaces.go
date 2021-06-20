@@ -10,5 +10,5 @@ type HttpClient interface {
 }
 
 type Reader interface {
-	Read(data *models.Data)
+	Read(data *models.Data) error
 }

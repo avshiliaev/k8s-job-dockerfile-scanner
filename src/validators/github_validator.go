@@ -14,8 +14,9 @@ func GitHubValidator() *gitHubValidator {
 	return &gitHubValidator{}
 }
 
-func (validator *gitHubValidator) Validate(data *models.Data) {
+func (validator *gitHubValidator) Validate(data *models.Data) error {
 
+	var err error
 	var credentials []models.RepoCredentials
 	for _, inputLine := range data.InputLines {
 
@@ -26,7 +27,8 @@ func (validator *gitHubValidator) Validate(data *models.Data) {
 		if isEmptyString(repoURL) || isEmptyString(commitSHA) {
 			continue
 		}
-		owner, name, _ := getOwnerAndName(repoURL)
+		owner, name, errLocal := getOwnerAndName(repoURL)
+		err = errLocal
 
 		credentials = append(credentials, models.RepoCredentials{
 			Owner:     owner,
@@ -35,6 +37,8 @@ func (validator *gitHubValidator) Validate(data *models.Data) {
 		})
 	}
 	data.Credentials = credentials
+
+	return err
 
 }
 

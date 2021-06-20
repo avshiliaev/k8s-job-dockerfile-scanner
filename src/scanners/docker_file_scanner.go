@@ -21,20 +21,25 @@ func DockerFileScanner(url string) *dockerFileScanner {
 }
 
 // Methods with pointer receivers
-func (s *dockerFileScanner) Read(reader readers.Reader) {
-	reader.Read(s.data)
+func (s *dockerFileScanner) Read(reader readers.Reader) error {
+	err := reader.Read(s.data)
+	return err
 }
-func (s *dockerFileScanner) Validate(validator validators.Validator) {
-	validator.Validate(s.data)
+func (s *dockerFileScanner) Validate(validator validators.Validator) error {
+	err := validator.Validate(s.data)
+	return err
 }
-func (s *dockerFileScanner) Query(api api.RepositoryApi) {
-	api.Query(s.data)
+func (s *dockerFileScanner) Query(api api.RepositoryApi) error {
+	err := api.Query(s.data)
+	return err
 }
-func (s *dockerFileScanner) Parse(parser parsers.FileParser) {
-	parser.Parse(s.data)
+func (s *dockerFileScanner) Parse(parser parsers.FileParser) error {
+	err := parser.Parse(s.data)
+	return err
 }
-func (s *dockerFileScanner) Write(writer writers.Writer) {
-	writer.Write(s.data)
+func (s *dockerFileScanner) Write(writer writers.Writer) error {
+	err := writer.Write(s.data)
+	return err
 }
 func (s *dockerFileScanner) GetData() *models.Data {
 	return s.data

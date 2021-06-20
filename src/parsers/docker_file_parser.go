@@ -13,8 +13,9 @@ func DockerFileParser() *dockerFileParser {
 	return &dockerFileParser{}
 }
 
-func (p *dockerFileParser) Parse(data *models.Data) {
+func (p *dockerFileParser) Parse(data *models.Data) error {
 
+	var err error
 	var repos []models.Repo
 	for _, repo := range data.Repositories {
 		var files []models.File
@@ -36,5 +37,5 @@ func (p *dockerFileParser) Parse(data *models.Data) {
 		})
 	}
 	data.Repositories = repos
-
+	return err
 }

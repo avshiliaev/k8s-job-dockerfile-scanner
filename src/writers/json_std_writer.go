@@ -12,7 +12,8 @@ func JsonStdWriter() *jsonStdWriter {
 	return &jsonStdWriter{}
 }
 
-func (jsonWriter *jsonStdWriter) Write(data *models.Data) {
-	j, _ := json.MarshalIndent(data, "", "\t")
+func (jsonWriter *jsonStdWriter) Write(data *models.Data) error {
+	j, err := json.MarshalIndent(data, "", "\t")
 	data.Output = string(j)
+	return err
 }

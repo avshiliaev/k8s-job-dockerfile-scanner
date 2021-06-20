@@ -11,18 +11,14 @@ func TestRemoteTxtReader(t *testing.T) {
 	// Arrange
 	data := &models.Data{
 		Url:          "https://test.com/",
-		InputLines:   nil,
-		Credentials:  nil,
-		Repositories: nil,
-		Output:       "",
 	}
 	reader := readers.RemoteTxtReader(&ClientMock{})
 
 	// Act
-	reader.Read(data)
+	err := reader.Read(data)
 
 	// Assert
-	if len(data.InputLines) != 3 {
+	if len(data.InputLines) != 3 || err != nil {
 		t.Error()
 	}
 }
