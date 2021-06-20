@@ -10,7 +10,15 @@ import (
 	"redhat-sre-task-dockerfile-scanner/src/readers"
 	"redhat-sre-task-dockerfile-scanner/src/scanners"
 	"redhat-sre-task-dockerfile-scanner/src/validators"
-	"redhat-sre-task-dockerfile-scanner/src/writers"
+	"redhat-sre-task-dockerfile-scanner/src/serializers"
+)
+
+const (
+	input   = "input"
+	format  = "format"
+	pattern = "pattern"
+	vendor  = "vendor"
+	out     = "out"
 )
 
 func main() {
@@ -21,32 +29,32 @@ func main() {
 		Usage: "scans repositories for Dockerfiles and retrieves image information",
 		Flags: []cli.Flag{
 			&cli.StringFlag{
-				Name:     "input",
+				Name:     input,
 				Aliases:  []string{"i"},
 				Value:    "",
 				Usage:    "link to a txt input file",
 				Required: true,
 			},
 			&cli.StringFlag{
-				Name:    "format",
+				Name:    format,
 				Aliases: []string{"f"},
 				Value:   "txt",
 				Usage:   "input format",
 			},
 			&cli.StringFlag{
-				Name:    "pattern",
+				Name:    pattern,
 				Aliases: []string{"p"},
 				Value:   "Dockerfile",
 				Usage:   "a filename pattern to match",
 			},
 			&cli.StringFlag{
-				Name:    "vendor",
+				Name:    vendor,
 				Aliases: []string{"v"},
 				Value:   "github",
 				Usage:   "a repository vendor name",
 			},
 			&cli.StringFlag{
-				Name:    "out",
+				Name:    out,
 				Aliases: []string{"o"},
 				Value:   "json",
 				Usage:   "an output format",
@@ -65,20 +73,36 @@ func main() {
 
 func RunFromContext(c *cli.Context) error {
 
-	scanner := scanners.DockerFileScanner(c.String("input"))
-	if c.String("format") == "txt" {
-		scanner.Read(readers.RemoteTxtReader(&http.Client{}))
+	var err error
+	scanner := scanners.DockerFileScanner(c.String(input))
+	if c.String(format) == "txt" {
+		err = scanner.Read(readers.RemoteTxtReader(&http.Client{}))
+		if err != nil {
+			return err
+		}
 	}
-	if c.String("vendor") == "github" {
-		scanner.Validate(validators.GitHubValidator())
-		scanner.Query(github.Api(github.GoogleGitHubClient()))
+	if c.String(vendor) == "github" {
+		err = scanner.Validate(validators.GitHubValidator())
+		if err != nil {
+			return err
+		}
+		err = scanner.Query(github.Api(github.GoogleGitHubClient()))
+		if err != nil {
+			return err
+		}
 	}
-	if c.String("pattern") == "Dockerfile" {
-		scanner.Parse(parsers.DockerFileParser())
+	if c.String(pattern) == "Dockerfile" {
+		err = scanner.Parse(parsers.DockerFileParser())
+		if err != nil {
+			return err
+		}
 	}
-	if c.String("out") == "json" {
-		scanner.Write(writers.JsonStdWriter())
+	if c.String(out) == "json" {
+		err = scanner.Serialize(serializers.JsonSerializers())
+		if err != nil {
+			return err
+		}
 	}
 
-	return nil
+	return err
 }

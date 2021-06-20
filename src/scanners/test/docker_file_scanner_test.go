@@ -4,9 +4,9 @@ import (
 	"redhat-sre-task-dockerfile-scanner/src/api/github"
 	"redhat-sre-task-dockerfile-scanner/src/parsers"
 	"redhat-sre-task-dockerfile-scanner/src/readers"
-	scanners "redhat-sre-task-dockerfile-scanner/src/scanners"
+	"redhat-sre-task-dockerfile-scanner/src/scanners"
+	"redhat-sre-task-dockerfile-scanner/src/serializers"
 	"redhat-sre-task-dockerfile-scanner/src/validators"
-	"redhat-sre-task-dockerfile-scanner/src/writers"
 	"testing"
 )
 
@@ -16,15 +16,15 @@ func TestScanner(t *testing.T) {
 	scanner := scanners.DockerFileScanner("https://test.com/test.txt")
 
 	// Act
-	//TODO: add chain of calls
-	scanner.Read(readers.RemoteTxtReader(&MockHttpClient{}))
-	scanner.Validate(validators.GitHubValidator())
-	scanner.Query(github.Api(&MockGitHubClient{}))
-	scanner.Parse(parsers.DockerFileParser())
-	scanner.Write(writers.JsonStdWriter())
+	var err error
+	err = scanner.Read(readers.RemoteTxtReader(&MockHttpClient{}))
+	err = scanner.Validate(validators.GitHubValidator())
+	err = scanner.Query(github.Api(&MockGitHubClient{}))
+	err = scanner.Parse(parsers.DockerFileParser())
+	err = scanner.Serialize(serializers.JsonSerializers())
 
 	// Assert
-	if scanner.GetData().Output == "" {
+	if scanner.GetData().Output == "" || err != nil {
 		t.Error()
 	}
 }

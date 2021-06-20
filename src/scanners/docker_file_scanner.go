@@ -5,8 +5,8 @@ import (
 	"redhat-sre-task-dockerfile-scanner/src/models"
 	"redhat-sre-task-dockerfile-scanner/src/parsers"
 	"redhat-sre-task-dockerfile-scanner/src/readers"
+	"redhat-sre-task-dockerfile-scanner/src/serializers"
 	"redhat-sre-task-dockerfile-scanner/src/validators"
-	"redhat-sre-task-dockerfile-scanner/src/writers"
 )
 
 // dockerFileScanner Concrete private implementation
@@ -37,8 +37,8 @@ func (s *dockerFileScanner) Parse(parser parsers.FileParser) error {
 	err := parser.Parse(s.data)
 	return err
 }
-func (s *dockerFileScanner) Write(writer writers.Writer) error {
-	err := writer.Write(s.data)
+func (s *dockerFileScanner) Serialize(serializer serializers.Serializer) error {
+	err := serializer.Serialize(s.data)
 	return err
 }
 func (s *dockerFileScanner) GetData() *models.Data {
