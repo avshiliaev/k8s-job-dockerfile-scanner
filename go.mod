@@ -1,0 +1,1 @@
+module "redhat-sre-task-dockerfile-scanner"
