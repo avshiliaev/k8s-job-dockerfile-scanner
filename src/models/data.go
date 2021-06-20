@@ -11,6 +11,7 @@ type Repo struct {
 }
 
 type RepoCredentials struct {
+	Url       string
 	Owner     string
 	Name      string
 	CommitSHA string
