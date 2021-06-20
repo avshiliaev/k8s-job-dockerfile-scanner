@@ -3,7 +3,6 @@ package readers
 import (
 	"bufio"
 	"io"
-	"log"
 	"net/http"
 	"redhat-sre-task-dockerfile-scanner/src/models"
 )
@@ -18,12 +17,13 @@ func RemoteTxtReader(client HttpClient) *remoteTxtReader {
 	}
 }
 
-func (reader *remoteTxtReader) Read(data *models.Data) {
+func (reader *remoteTxtReader) Read(data *models.Data) error {
 
+	var err error
 	var inputLines []string
 	req, err := http.NewRequest("GET", data.Url, nil)
 	if err != nil {
-		log.Fatalln(err)
+		return err
 	}
 
 	// Content-Type: text/plain
@@ -33,27 +33,27 @@ func (reader *remoteTxtReader) Read(data *models.Data) {
 
 	resp, err := reader.client.Do(req)
 	if err != nil {
-		log.Fatalln(err)
+		return err
 	}
-
-	defer func(Body io.ReadCloser) {
+	defer func(Body io.ReadCloser) error {
 		err := Body.Close()
 		if err != nil {
-
+			return err
 		}
+		return nil
 	}(resp.Body)
 
 	fileReader := bufio.NewScanner(resp.Body)
 
 	for fileReader.Scan() {
 		input := fileReader.Text()
-		// TODO: checks
 		inputLines = append(inputLines, input)
 	}
 	if err := fileReader.Err(); err != nil {
-		log.Fatal(err)
+		return err
 	}
 
 	data.InputLines = inputLines
+	return err
 
 }

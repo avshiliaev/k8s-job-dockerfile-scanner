@@ -2,16 +2,15 @@ package github
 
 import (
 	"context"
-	"fmt"
 	"github.com/google/go-github/v35/github"
 	"redhat-sre-task-dockerfile-scanner/src/models"
 	"strings"
 )
 
 type AbstractGitHubClient interface {
-	CheckFileFormat(repo models.RepoCredentials, namePattern string) bool
-	GetFilePaths(repo models.RepoCredentials, namePattern string) []string
-	GetContent(repo models.RepoCredentials, path string) string
+	CheckFileFormat(repo models.RepoCredentials, namePattern string) (bool, error)
+	GetFilePaths(repo models.RepoCredentials, namePattern string) ([]string, error)
+	GetContent(repo models.RepoCredentials, path string) (string, error)
 }
 
 type googleGitHubClient struct {
@@ -24,17 +23,16 @@ func GoogleGitHubClient() *googleGitHubClient {
 	}
 }
 
-func (api *googleGitHubClient) CheckFileFormat(repo models.RepoCredentials, namePattern string) bool {
-	languages, response, err := api.Client.Repositories.ListLanguages(context.Background(), repo.Owner, repo.Name)
-	fmt.Println(languages, response, err)
+func (api *googleGitHubClient) CheckFileFormat(repo models.RepoCredentials, namePattern string) (bool, error) {
+	languages, _, err := api.Client.Repositories.ListLanguages(context.Background(), repo.Owner, repo.Name)
 	if _, ok := languages[namePattern]; ok {
-		return true
+		return true, err
 	}
-	return false
+	return false, err
 }
 
-func (api *googleGitHubClient) GetFilePaths(repo models.RepoCredentials, namePattern string) []string {
-	tree, response, err := api.Client.Git.GetTree(
+func (api *googleGitHubClient) GetFilePaths(repo models.RepoCredentials, namePattern string) ([]string, error) {
+	tree, _, err := api.Client.Git.GetTree(
 		context.Background(),
 		repo.Owner,
 		repo.Name,
@@ -42,7 +40,7 @@ func (api *googleGitHubClient) GetFilePaths(repo models.RepoCredentials, namePat
 		true,
 	)
 	if err != nil {
-		fmt.Println(response, err)
+		return nil, err
 	}
 	var paths []string
 	for _, entry := range tree.Entries {
@@ -53,12 +51,12 @@ func (api *googleGitHubClient) GetFilePaths(repo models.RepoCredentials, namePat
 		}
 	}
 
-	return paths
+	return paths, err
 }
 
-func (api *googleGitHubClient) GetContent(repo models.RepoCredentials, path string) string {
+func (api *googleGitHubClient) GetContent(repo models.RepoCredentials, path string) (string, error) {
 	opt := &github.RepositoryContentGetOptions{Ref: repo.CommitSHA}
-	contentEncoded, _, response, err := api.Client.Repositories.GetContents(
+	contentEncoded, _, _, err := api.Client.Repositories.GetContents(
 		context.Background(),
 		repo.Owner,
 		repo.Name,
@@ -66,12 +64,12 @@ func (api *googleGitHubClient) GetContent(repo models.RepoCredentials, path stri
 		opt,
 	)
 	if err != nil {
-		fmt.Println(response, err)
+		return "", err
 	}
 	content, err := contentEncoded.GetContent()
 	if err != nil {
-		fmt.Println(response, err)
+		return "", err
 	}
 
-	return content
+	return content, err
 }

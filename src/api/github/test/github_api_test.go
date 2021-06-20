@@ -21,10 +21,10 @@ func TestApi(t *testing.T) {
 	api := github.Api(&MockGitHubClient{})
 
 	// Act
-	api.Query(data)
+	err := api.Query(data)
 
 	// Assert
-	if len(data.Repositories) == 0 {
+	if len(data.Repositories) == 0 || err != nil {
 		t.Error()
 	}
 

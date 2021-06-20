@@ -29,12 +29,12 @@ func TestDockerFileParser(t *testing.T) {
 	parser := parsers.DockerFileParser()
 
 	// Act
-	parser.Parse(data)
+	err := parser.Parse(data)
 
 	// Assert
 	for _, repo := range data.Repositories {
 		for _, file := range repo.Files {
-			if len(file.Objects) == 0 {
+			if len(file.Objects) == 0 || err != nil {
 				t.Error()
 			}
 		}

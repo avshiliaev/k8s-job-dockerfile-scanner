@@ -4,15 +4,15 @@ import (
 	"redhat-sre-task-dockerfile-scanner/src/api"
 	"redhat-sre-task-dockerfile-scanner/src/parsers"
 	"redhat-sre-task-dockerfile-scanner/src/readers"
+	"redhat-sre-task-dockerfile-scanner/src/serializers"
 	"redhat-sre-task-dockerfile-scanner/src/validators"
-	"redhat-sre-task-dockerfile-scanner/src/writers"
 )
 
 // Scanner abstract type
 type Scanner interface {
-	Read(reader readers.Reader)
-	Validate(validator validators.Validator)
-	Query(api api.RepositoryApi)
-	Parse(parser parsers.FileParser)
-	Write(writer writers.Writer)
+	Read(reader readers.Reader) error
+	Validate(validator validators.Validator) error
+	Query(api api.RepositoryApi) error
+	Parse(parser parsers.FileParser) error
+	Serialize(serializer serializers.Serializer) error
 }
