@@ -31,6 +31,7 @@ func (validator *gitHubValidator) Validate(data *models.Data) error {
 		err = errLocal
 
 		credentials = append(credentials, models.RepoCredentials{
+			Url:       repoURL,
 			Owner:     owner,
 			Name:      name,
 			CommitSHA: commitSHA,

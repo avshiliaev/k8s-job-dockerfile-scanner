@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"github.com/urfave/cli/v2"
 	"log"
 	"net/http"
@@ -9,8 +10,8 @@ import (
 	"redhat-sre-task-dockerfile-scanner/src/parsers"
 	"redhat-sre-task-dockerfile-scanner/src/readers"
 	"redhat-sre-task-dockerfile-scanner/src/scanners"
-	"redhat-sre-task-dockerfile-scanner/src/validators"
 	"redhat-sre-task-dockerfile-scanner/src/serializers"
+	"redhat-sre-task-dockerfile-scanner/src/validators"
 )
 
 const (
@@ -103,6 +104,8 @@ func RunFromContext(c *cli.Context) error {
 			return err
 		}
 	}
+
+	fmt.Println(scanner.GetData().Output)
 
 	return err
 }

@@ -13,7 +13,19 @@ func JsonSerializers() *jsonSerializers {
 }
 
 func (jsonSerializers *jsonSerializers) Serialize(data *models.Data) error {
-	j, err := json.MarshalIndent(data, "", "\t")
+
+	output := map[string]map[string]map[string][]string{}
+	output["data"] = map[string]map[string][]string{}
+	for i, credentials := range data.Credentials {
+		key := credentials.Url + ":" + credentials.CommitSHA
+		val := map[string][]string{}
+		for _, file := range data.Repositories[i].Files {
+			val[file.Path] = file.Objects
+		}
+		output["data"][key] = val
+	}
+
+	j, err := json.MarshalIndent(output, "", "\t")
 	data.Output = string(j)
 	return err
 }
