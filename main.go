@@ -8,7 +8,7 @@ import (
 	"redhat-sre-task-dockerfile-scanner/src/api/github"
 	"redhat-sre-task-dockerfile-scanner/src/parsers"
 	"redhat-sre-task-dockerfile-scanner/src/readers"
-	scanners "redhat-sre-task-dockerfile-scanner/src/scanner"
+	"redhat-sre-task-dockerfile-scanner/src/scanners"
 	"redhat-sre-task-dockerfile-scanner/src/validators"
 	"redhat-sre-task-dockerfile-scanner/src/writers"
 )
@@ -64,24 +64,19 @@ func main() {
 }
 
 func RunFromContext(c *cli.Context) error {
-	inputLink := c.String("input")
-	inputFormat := c.String("format")
-	repoVendor := c.String("vendor")
-	fileNamePattern := c.String("pattern")
-	outputFormat := c.String("out")
 
-	scanner := scanners.DockerFileScanner(inputLink)
-	if inputFormat == "txt" {
+	scanner := scanners.DockerFileScanner(c.String("input"))
+	if c.String("format") == "txt" {
 		scanner.Read(readers.RemoteTxtReader(&http.Client{}))
 	}
-	if repoVendor == "github" {
+	if c.String("vendor") == "github" {
 		scanner.Validate(validators.GitHubValidator())
 		scanner.Query(github.Api(github.GoogleGitHubClient()))
 	}
-	if fileNamePattern == "Dockerfile" {
+	if c.String("pattern") == "Dockerfile" {
 		scanner.Parse(parsers.DockerFileParser())
 	}
-	if outputFormat == "json" {
+	if c.String("out") == "json" {
 		scanner.Write(writers.JsonStdWriter())
 	}
 

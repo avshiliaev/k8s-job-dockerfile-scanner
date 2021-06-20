@@ -4,7 +4,7 @@ import (
 	"redhat-sre-task-dockerfile-scanner/src/api/github"
 	"redhat-sre-task-dockerfile-scanner/src/parsers"
 	"redhat-sre-task-dockerfile-scanner/src/readers"
-	scanners "redhat-sre-task-dockerfile-scanner/src/scanner"
+	scanners "redhat-sre-task-dockerfile-scanner/src/scanners"
 	"redhat-sre-task-dockerfile-scanner/src/validators"
 	"redhat-sre-task-dockerfile-scanner/src/writers"
 	"testing"
