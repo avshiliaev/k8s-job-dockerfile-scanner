@@ -1,8 +1,8 @@
 package parsers
 
 import (
-	"github.com/moby/buildkit/frontend/dockerfile/parser"
 	"redhat-sre-task-dockerfile-scanner/src/models"
+	"redhat-sre-task-dockerfile-scanner/src/parsers/buildkit"
 	"strings"
 )
 
@@ -20,7 +20,7 @@ func (p *dockerFileParser) Parse(data *models.Data) error {
 	for _, repo := range data.Repositories {
 		var files []models.File
 		for _, file := range repo.Files {
-			parsed, _ := parser.Parse(strings.NewReader(file.Content))
+			parsed, _ := buildkit.Parse(strings.NewReader(file.Content))
 			var images []string
 			for _, child := range parsed.AST.Children {
 				if child.Value == "from" {
