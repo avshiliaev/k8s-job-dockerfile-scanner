@@ -17,13 +17,14 @@ spec:
     spec:
       containers:
         - name: scanner-job
-          image: avshiliaev/job:0.0.1
+          image: avshiliaev/job:0.0.2
           env:
             - name: REPOSITORY_LIST_URL
               valueFrom:
                 configMapKeyRef:
                   name: scanner-job-config
                   key: repositories
+          command: ["/app/scanner", "-i", "$(REPOSITORY_LIST_URL)"]
           imagePullPolicy: Always
       restartPolicy: Never
   backoffLimit: 4

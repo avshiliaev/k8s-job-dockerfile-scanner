@@ -18,6 +18,8 @@ which is not aware of a concrete implementations.
 All in all, it allows for further extension of the components. We can introduce different kinds of input readers, api
 clients, vendor specific checks and serializers.
 
+![alt text](image.png "Implementation")
+
 # Considerations for improvement
 
 We can introduce a Helm chart to make the collection of manifests more consistent. 

@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 
-CGO_ENABLED=0 GOOS=linux go build -o scanner-job .
-docker image build . -t avshiliaev/job:0.0.1
-docker push avshiliaev/job:0.0.1
+kubectl delete job.batch/scanner-job
+
+docker image build . -t avshiliaev/job:0.0.2
+docker push avshiliaev/job:0.0.2
 
 # docker-compose build --no-cache
 # docker-compose up
