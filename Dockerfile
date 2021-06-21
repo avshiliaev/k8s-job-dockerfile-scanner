@@ -3,7 +3,6 @@ RUN apk add --no-cache git
 WORKDIR /tmp/scanner
 
 COPY go.mod .
-COPY go.sum .
 
 RUN go mod download
 
@@ -19,4 +18,4 @@ RUN apk add ca-certificates
 COPY --from=build_base /tmp/scanner/out/dockerfile-scanner /app/scanner
 
 # Run the binary program produced by `go install`
-CMD ["/app/scanner", "-i", "$REPOSITORY_LIST_URL"]
+CMD ["/app/scanner", "-i ${REPOSITORY_LIST_URL}"]
