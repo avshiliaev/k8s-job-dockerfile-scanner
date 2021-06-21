@@ -1,0 +1,30 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: scanner-job-config
+data:
+  repositories: "https://gist.githubusercontent.com/jmelis/c60e61a893248244dc4fa12b946585c4/raw/25d39f67f2405330a6314cad64fac423a171162c/sources.txt"
+
+---
+
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: scanner-job
+spec:
+  ttlSecondsAfterFinished: 20
+  template:
+    spec:
+      containers:
+        - name: scanner-job
+          image: avshiliaev/job:0.0.2
+          env:
+            - name: REPOSITORY_LIST_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: scanner-job-config
+                  key: repositories
+          command: ["/app/scanner", "-i", "$(REPOSITORY_LIST_URL)"]
+          imagePullPolicy: Always
+      restartPolicy: Never
+  backoffLimit: 4
