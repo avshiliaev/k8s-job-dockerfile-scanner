@@ -70,3 +70,8 @@ clients, vendor specific checks and serializers.
 * Originally the entire Moby BuildKit was included into the project. However, the package is quite huge in itself, and I
   decided to retrieve only the needed component. However, a better reference to the existing Open Source project is
   needed!
+* The main.go package can be inproved. Instead of if - else statement, we can offload the flow to a better state 
+  machine, as in this [example](https://github.com/avshiliaev/design-patterns-in-c-sharp/tree/master/Behavioral/State).
+  The application would gain in complexity though.
+* We can also parallelize the [part](src/api/github/github_api.go) of the flow, making requests to the Repository Api.
+  Mutex on the Data struct would be sufficient to avoid racing conditions. 
