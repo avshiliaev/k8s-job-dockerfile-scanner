@@ -10,17 +10,28 @@ of the steps can through an error while executing, thus stopping the execution o
 handling more centralized: the errors are being propagated to the top, and the scanner object is the only one which is
 allowed to act upon them.
 
+The scanner interface has the following structure:
+
 ```go
-package main
+package test
 
-func main() {
+func TestScanner(t *testing.T) {
 
+	// Arrange
 	scanner := scanners.DockerFileScanner("https://test.com/test.txt")
-	scanner.Read(readers.RemoteTxtReader(&MockHttpClient{}))
-	scanner.Validate(validators.GitHubValidator())
-	scanner.Query(github.Api(&MockGitHubClient{}))
-	scanner.Parse(parsers.DockerFileParser())
-	scanner.Write(writers.JsonStdWriter())
+
+	// Act
+	var err error
+	err = scanner.Read(readers.RemoteTxtReader(&MockHttpClient{}))
+	err = scanner.Validate(validators.GitHubValidator())
+	err = scanner.Query(github.Api(&MockGitHubClient{}))
+	err = scanner.Parse(parsers.DockerFileParser())
+	err = scanner.Serialize(serializers.JsonSerializers())
+
+	// Assert
+	if scanner.GetData().Output == "" || err != nil {
+		t.Error()
+	}
 }
 ```
 
@@ -28,6 +39,14 @@ The application's frontend is built as a CLI. The app accepts command line argum
 program. It makes up a kind of a state machine, where multiple transition between states get performed based on the
 configuration passed. It is also a builder pattern, since the order of execution is offloaded to a separate object,
 which is not aware of a concrete implementations.
+
+**The app can be run as a CLI in the following way:**
+
+```shell
+./scanner -i http://github.com/ -p Dockerfile -v github -o json
+```
+
+The CLI interface also makes the app flexible enough to run in different environments, including locally.
 
 ### 3rd party components
 
@@ -39,7 +58,11 @@ clients, vendor specific checks and serializers.
 
 ![alt text](image.png "Implementation")
 
-# Scripts
+# Scripts and commands
+
+* Unit tests can be triggered with the `./test.sh` command
+* The following command `./run.sh` can be used for local development. It builds and pushes the image, and then applies
+  the k8s manifests.
 
 # Considerations for improvement
 
